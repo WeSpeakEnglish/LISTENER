@@ -3,14 +3,15 @@
 
 #include "stm32f10x.h"
 
-#define SIZE_OF_QUEUE 256
-#define MASK_OF_QUEUE 0xFF
+#define SIZE_OF_QUEUE 1024
+#define MASK_OF_QUEUE 0x3FF
 
 
 struct Queue{
 	u32 Elements[SIZE_OF_QUEUE];
 	int head;
 	int tail;
+        u16 counter;
 }; 
 
 struct QueueElement{

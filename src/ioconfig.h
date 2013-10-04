@@ -9,6 +9,5 @@ void EXTI0_IRQHandler(void); //interrupt handler
 void EXTI1_IRQHandler(void); //interrupt handler
 void EXTI2_IRQHandler(void); //interrupt handler
 void ConfigIO(void);
-void ConfigI2C(void);
-//void InterruptCS_On(void);
+
 #endif

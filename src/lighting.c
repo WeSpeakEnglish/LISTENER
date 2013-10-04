@@ -26,3 +26,9 @@ return;
 }
 
 
+void LedOK_On(u8 Lighted){
+ if(Lighted) GPIOA->ODR&=~GPIO_ODR_ODR15;// log 0 to line (LED ON) 
+ else        GPIOA->ODR|=GPIO_ODR_ODR15;// log 1 to exit (LED off)
+return;
+}
+

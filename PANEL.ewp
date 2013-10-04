@@ -1038,6 +1038,9 @@
     <name>$PROJ_DIR$\src\delays.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\src\I2Croutines.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\src\ioconfig.c</name>
   </file>
   <file>

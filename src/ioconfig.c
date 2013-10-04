@@ -1,6 +1,5 @@
 #include "ioconfig.h"
-#include "delays.h"
-#include "stm32f10x_i2c.h"
+#include "stm32F10x.h"
 
 void GPIO_Int_Conf(void){
   RCC->APB2ENR|=RCC_APB2ENR_AFIOEN;    //
@@ -76,10 +75,10 @@ AFIO -> MAPR |= AFIO_MAPR_SWJ_CFG_1;
     GPIOA->CRH|=(GPIO_CRH_MODE15_1|GPIO_CRH_MODE15_0);
   
     
-    GPIOA->ODR&=~GPIO_ODR_ODR15;// log 1 to exit (LED off)
+    
 //---------------------------------------------------------------------------------------------------------
     
-  ConfigI2C();                                   // configure I2C first
+
   RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;            // тактирование линий GPIOB
   //Lines PB0...PB3 Open Drain
     GPIOB->CRL|=(GPIO_CRL_CNF0_0|GPIO_CRL_CNF1_0|GPIO_CRL_CNF2_0|GPIO_CRL_CNF3_0);
@@ -91,10 +90,6 @@ AFIO -> MAPR |= AFIO_MAPR_SWJ_CFG_1;
 void EXTI0_IRQHandler(void)
 {
  static u8 InsideCounter = 0;
-
- //  GPIOA->ODR&=~GPIO_ODR_ODR5; // drive PA5 to low
- //  GPIOA->ODR&=~GPIO_ODR_ODR6; // drive PA6 to low
-   delay_1s(); //delay button condition stable 
   
    if (InsideCounter%2)
     {
@@ -105,56 +100,27 @@ void EXTI0_IRQHandler(void)
    NVIC_DisableIRQ (TIM2_IRQn);    //запретить прерывание таймера
 
      }  
-EXTI->PR|=0x01; // clear interrupt
-InsideCounter++;
+ EXTI->PR|=0x01; // clear interrupt
+ InsideCounter++;
 }
 
 void EXTI1_IRQHandler(void)
 {
-static u8 InsideCounter = 0;
+ static u8 InsideCounter = 0;
 
-EXTI->PR|=0x01; // clear interrupt
-InsideCounter++;
+ EXTI->PR|=0x01; // clear interrupt
+ InsideCounter++;
 }
 
 void EXTI2_IRQHandler(void)
 {
-static u8 InsideCounter = 0;
+ static u8 InsideCounter = 0;
 
-EXTI->PR|=0x01; // clear interrupt
-InsideCounter++;
+ EXTI->PR|=0x01; // clear interrupt
+ InsideCounter++;
 }
 
 
-#define SLAVE_ADDRESS 0x37
-#define ClockSpeed 100000
-
-void ConfigI2C(void){
-  
-  GPIO_InitTypeDef GPIO_InitStructure;
-  I2C_InitTypeDef  I2C_InitStructure;
-  //-- I2C -----------------------------------------------------------------------------------------------
-   RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
-       
-
-    /* Configure I2C2 pins: SCL and SDA ----------------------------------------*/
-    GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_10 | GPIO_Pin_11;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-    
-   I2C_DeInit(I2C2);
-    I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
-    I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
-    I2C_InitStructure.I2C_OwnAddress1 = SLAVE_ADDRESS;
-    I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
-    I2C_InitStructure.I2C_ClockSpeed = ClockSpeed;
-    I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-    I2C_Init(I2C2, &I2C_InitStructure);
-    I2C_ITConfig(I2C2, I2C_IT_ERR, ENABLE);
-
-    I2C_ITConfig(I2C2, I2C_IT_EVT | I2C_IT_BUF, ENABLE);
-}
 
 
 

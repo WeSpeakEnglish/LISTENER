@@ -3,6 +3,7 @@
 #include "queue.h"
 
 union Keys_U readedKeys;
+u8 ReadyFlagKb = 0;
 
 
 void SetLineKbd(u8 Number){

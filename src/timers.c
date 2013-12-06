@@ -1,6 +1,7 @@
 #include "timers.h"
 #include "stm32F10x.h"
 #include "keyboard.h"
+//#include ""
 
 
 void TIM2_init(void)
@@ -74,13 +75,11 @@ void TIM4_IRQHandler(void)
       SetLineKbd(3);
       break;
     case 7:
-      ReadLineKbd(3);
-      break;   
-    case 8:
-      SolvePressedKeys();   
+      ReadLineKbd(3);  
+      ReadyFlagKb = 1;  
    }
   InsideState++;
-  if (InsideState > 8) InsideState=0; 
+  InsideState %= 8; 
   return;
 }
 

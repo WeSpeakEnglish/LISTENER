@@ -1,6 +1,8 @@
 #include "ioconfig.h"
 #include "stm32F10x.h"
 
+
+
 void GPIO_Int_Conf(void){
   RCC->APB2ENR|=RCC_APB2ENR_AFIOEN;    //
   AFIO->EXTICR[0]&=~AFIO_EXTICR1_EXTI0_PA; //EXTI0  (A0 as result)
@@ -22,11 +24,23 @@ return;
 }
 
 void Touch_Int_Conf(void){
+  NVIC_InitTypeDef  NVIC_InitStructure;
+  
   RCC->APB2ENR|=RCC_APB2ENR_AFIOEN;    //
-  AFIO->EXTICR[1]&=~AFIO_EXTICR1_EXTI1_PA; //EXTI2  (A2 as result)
+  AFIO->EXTICR[1]&=~AFIO_EXTICR1_EXTI1_PA; //EXTI1  (A1 as result)
   EXTI->IMR|=EXTI_IMR_MR1;                           //
-  EXTI->RTSR|=EXTI_RTSR_TR1;                          //
-  NVIC_EnableIRQ (EXTI1_IRQn);          //
+  
+   EXTI->RTSR&=~EXTI_RTSR_TR1; 
+   EXTI->FTSR|=EXTI_FTSR_TR1;
+ // EdgeTS=0;
+   
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;  //set low
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure); 
+                          //
+  //NVIC_EnableIRQ (EXTI1_IRQn);          //
 
 return;
 }
@@ -50,6 +64,14 @@ void InterruptCS_On(void){
 void ConfigIO(void){
   //------------------------------------------------------------------------------------------------------
   RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;            //тактирование линий GPIOA
+  
+  //PA2
+  GPIOA->CRL|=(GPIO_CRL_CNF1_1);
+  GPIOA->CRL&=~(GPIO_CRL_CNF1_0);
+  GPIOA->CRL&=~(GPIO_CRL_MODE1_1); 
+  GPIOA->CRL&=~(GPIO_CRL_MODE1_0);
+  GPIOA->ODR|=(GPIO_ODR_ODR1);
+  
    //PA5 PA6 PA7 PA8 As Push-Pull 50 MHz
    GPIOA->CRL&=~(GPIO_CRL_CNF5_0 | GPIO_CRL_CNF6_0|GPIO_CRL_CNF7_0);
    GPIOA->CRL|=(GPIO_CRL_MODE5_1 | GPIO_CRL_MODE6_1|GPIO_CRL_MODE7_1);
@@ -104,13 +126,7 @@ void EXTI0_IRQHandler(void)
  InsideCounter++;
 }
 
-void EXTI1_IRQHandler(void)
-{
- static u8 InsideCounter = 0;
 
- EXTI->PR|=0x01; // clear interrupt
- InsideCounter++;
-}
 
 void EXTI2_IRQHandler(void)
 {

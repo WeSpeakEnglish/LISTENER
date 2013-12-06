@@ -1038,6 +1038,9 @@
     <name>$PROJ_DIR$\src\delays.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\src\events.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\src\I2Croutines.c</name>
   </file>
   <file>
@@ -1063,6 +1066,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\src\timingconfig.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\src\touchscreen.c</name>
   </file>
 </project>
 

@@ -15,6 +15,8 @@ union Keys_U{
   u16 Bits;
 };
 
+extern u8 ReadyFlagKb; // is Event detected?
+
 void SetLineKbd(u8 Number);
 void ReadLineKbd(u8 Number);
 void SolvePressedKeys(void);

@@ -3,5 +3,6 @@
 #include "stm32f10x.h"
 
 void ReleaseEvents(void);
+void StartShot(void); // generate pulse
 
 #endif

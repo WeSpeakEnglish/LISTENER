@@ -1,5 +1,6 @@
 #include "ioconfig.h"
 #include "stm32F10x.h"
+#include "stm32f10x_adc.h"
 
 
 
@@ -62,33 +63,31 @@ void InterruptCS_On(void){
 
 
 void ConfigIO(void){
-  //------------------------------------------------------------------------------------------------------
-  RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;            //тактирование линий GPIOA
-  
-  //PA2
-  GPIOA->CRL|=(GPIO_CRL_CNF1_1);
-  GPIOA->CRL&=~(GPIO_CRL_CNF1_0);
-  GPIOA->CRL&=~(GPIO_CRL_MODE1_1); 
-  GPIOA->CRL&=~(GPIO_CRL_MODE1_0);
-  GPIOA->ODR|=(GPIO_ODR_ODR1);
-  
-   //PA5 PA6 PA7 PA8 As Push-Pull 50 MHz
-   GPIOA->CRL&=~(GPIO_CRL_CNF5_0 | GPIO_CRL_CNF6_0|GPIO_CRL_CNF7_0);
-   GPIOA->CRL|=(GPIO_CRL_MODE5_1 | GPIO_CRL_MODE6_1|GPIO_CRL_MODE7_1);
-   GPIOA->CRL|=(GPIO_CRL_MODE5_0 | GPIO_CRL_MODE6_0|GPIO_CRL_MODE7_0);
-   GPIOA->CRH&=~( GPIO_CRH_CNF8_0);
-   GPIOA->CRH|=(GPIO_CRH_MODE8_1);
-   GPIOA->CRH|=(GPIO_CRH_MODE8_0);
 
- //PA9 PA10 PA11 PA12 As Push-Pull 2 MHz
-    GPIOA->CRH&=~(GPIO_CRH_CNF9_0 | GPIO_CRH_CNF10_0|GPIO_CRH_CNF11_0|GPIO_CRH_CNF12_0);
-    GPIOA->CRH|=(GPIO_CRH_MODE9_1 | GPIO_CRH_MODE10_1|GPIO_CRH_MODE11_1|GPIO_CRH_MODE12_1);
-    GPIOA->CRH&=~(GPIO_CRH_MODE9_0 | GPIO_CRH_MODE10_0|GPIO_CRH_MODE11_0|GPIO_CRH_MODE12_0);    
+  //------------------------------------------------------------------------------------------------------
+  RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;            //clock GPIOA
+  RCC -> APB2ENR |= RCC_APB2ENR_AFIOEN; // alternate function
+  /// ADC////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+        
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+   //PA8 As DIG IN
+
+ //  GPIOA->CRH&=~( GPIO_CRH_CNF8_0);
+ //  GPIOA->CRH|=(GPIO_CRH_MODE8_1);
+ //  GPIOA->CRH|=(GPIO_CRH_MODE8_0);
+
+ //PA10 PA12 As Push-Pull 2 MHz
+     GPIOA->CRH&=~(GPIO_CRH_CNF10_0|GPIO_CRH_CNF12_0);
+     GPIOA->CRH|=(GPIO_CRH_MODE10_1|GPIO_CRH_MODE12_1);
+     GPIOA->CRH&=~(GPIO_CRH_MODE10_0|GPIO_CRH_MODE12_0);    
  
-    
+  
     //// DISABLE JTAG Legs
     
-RCC -> APB2ENR |= RCC_APB2ENR_AFIOEN;
+
 AFIO -> MAPR |= AFIO_MAPR_SWJ_CFG_1;   
 
 //PA15 Open Drain at 50 MHz
@@ -102,11 +101,68 @@ AFIO -> MAPR |= AFIO_MAPR_SWJ_CFG_1;
     
 
   RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;            // тактирование линий GPIOB
-  //Lines PB0...PB3 Open Drain
-    GPIOB->CRL|=(GPIO_CRL_CNF0_0|GPIO_CRL_CNF1_0|GPIO_CRL_CNF2_0|GPIO_CRL_CNF3_0);
-    GPIOB->CRL&=~(GPIO_CRL_CNF0_1|GPIO_CRL_CNF1_1|GPIO_CRL_CNF2_1|GPIO_CRL_CNF3_1);
-    GPIOB->CRL|=(GPIO_CRL_MODE0_1|GPIO_CRL_MODE0_0|GPIO_CRL_MODE1_1|GPIO_CRL_MODE1_0|
-                 GPIO_CRL_MODE2_1|GPIO_CRL_MODE2_0|GPIO_CRL_MODE3_1|GPIO_CRL_MODE3_0); 
+ // RCC -> APB2ENR |= RCC_APB2ENR_AFIOEN; // alternate function
+   
+  //PB0 Push-Pull
+  GPIOB->CRL&=~(GPIO_CRL_CNF0_0);
+  GPIOB->CRL|=(GPIO_CRL_MODE0_1);
+  GPIOB->CRL&=~(GPIO_CRL_MODE0_0);  
+  GPIOB->BSRR=GPIO_BSRR_BR0;
+    
+  //PB1 as DIG input
+  GPIOB->CRL &=~GPIO_CRL_MODE1;
+  GPIOB->CRL &=~GPIO_CRL_CNF1;
+  GPIOB->CRL|=GPIO_CRL_CNF1_0; //floating input
+  
+  //PB2 as output to zero
+  GPIOB->CRL&=~(GPIO_CRL_CNF2_0);
+  GPIOB->CRL|=(GPIO_CRL_MODE2_1);
+  GPIOB->CRL&=~(GPIO_CRL_MODE2_0);  
+  GPIOB->BSRR=GPIO_BSRR_BR2;
+
+  //PB3 as output to zero
+  GPIOB->CRL&=~(GPIO_CRL_CNF3_0);
+  GPIOB->CRL|=(GPIO_CRL_MODE3_1);
+  GPIOB->CRL&=~(GPIO_CRL_MODE3_0);  
+  GPIOB->BSRR=GPIO_BSRR_BR3;
+  
+  //PB4 As Input 
+  GPIOB->CRL &=~GPIO_CRL_MODE4;
+  GPIOB->CRL &=~GPIO_CRL_CNF4;
+  GPIOB->CRL |=GPIO_CRL_CNF4_1; //pull 
+  GPIOB->BSRR |=  GPIO_BSRR_BS4; //up set to 1 
+  
+  //PB5 out push-pull
+   GPIOB->BSRR=GPIO_BSRR_BR5;
+   GPIOB->CRL&=~(GPIO_CRL_CNF5_0);
+   GPIOB->CRL|=(GPIO_CRL_MODE5_1);
+   GPIOB->CRL&=~(GPIO_CRL_MODE5_0);  
+   
+  
+  //Lines PB6...PB9 Open Drain
+  GPIOB->CRL|=(GPIO_CRL_CNF6_0|GPIO_CRL_CNF7_0);
+  GPIOB->CRH|=(GPIO_CRH_CNF8_0|GPIO_CRH_CNF9_0);
+  GPIOB->CRL&=~(GPIO_CRL_CNF6_1|GPIO_CRL_CNF7_1);
+  GPIOB->CRH&=~(GPIO_CRH_CNF8_1|GPIO_CRH_CNF9_1);
+  GPIOB->CRL|=(GPIO_CRL_MODE6_1|GPIO_CRL_MODE6_0);
+  GPIOB->CRL|=(GPIO_CRL_MODE7_1|GPIO_CRL_MODE7_0);
+  GPIOB->CRH|=(GPIO_CRH_MODE8_1|GPIO_CRH_MODE8_0);
+  GPIOB->CRH|=(GPIO_CRH_MODE9_1|GPIO_CRH_MODE9_0);
+  
+   //PB12..PB15 as Inputs    
+  GPIOB->CRH &=~GPIO_CRH_MODE12;
+  GPIOB->CRH &=~GPIO_CRH_CNF12;
+  GPIOB->CRH|=GPIO_CRH_CNF12_0; //floating input
+  GPIOB->CRH &=~GPIO_CRH_MODE13;
+  GPIOB->CRH &=~GPIO_CRH_CNF13;
+  GPIOB->CRH|=GPIO_CRH_CNF13_0; //floating input
+  GPIOB->CRH &=~GPIO_CRH_MODE14;
+  GPIOB->CRH &=~GPIO_CRH_CNF14;
+  GPIOB->CRH|=GPIO_CRH_CNF14_0; //floating input
+  GPIOB->CRH &=~GPIO_CRH_MODE15;
+  GPIOB->CRH &=~GPIO_CRH_CNF15;
+  GPIOB->CRH|=GPIO_CRH_CNF15_0; //floating input
+ 
 }
 
 void EXTI0_IRQHandler(void)

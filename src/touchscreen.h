@@ -8,4 +8,5 @@ extern u8 PressUpTS;
 
 void GenerateTSMessages(u8 Event);
 void EXTI1_IRQHandler(void);
+void TestTSPin(void); //test pin
 #endif

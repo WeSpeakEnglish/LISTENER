@@ -5,7 +5,7 @@
 
 
 #define SLAVE_ADDRESS 0x37<<1
-#define ClockSpeed 100000
+#define ClockSpeed 400000
 
 __IO uint8_t IndexRX, IndexTX;        // this line contain index for store received CMD thru interrupts, 
 __IO u8 Direction;                    // and direction data transfer (in Receive eq 1)          
@@ -53,9 +53,9 @@ void ConfigI2C(void){
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure); 
     /* Configure and enable I2C2 error interrupt -------------------------------*/  
-  NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-  NVIC_Init(&NVIC_InitStructure); 
+   NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
+   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+   NVIC_Init(&NVIC_InitStructure); 
 }
 
 
@@ -124,7 +124,9 @@ void I2C2_ER_IRQHandler(void)
   if (I2C_GetITStatus(I2C2, I2C_IT_AF)) 
   {
     I2C_ClearITPendingBit(I2C2, I2C_IT_AF);
-  }
+//         I2C_Cmd(I2C2, DISABLE);
+ //         I2C_Cmd(I2C2, ENABLE);
+ }
 }
 
 

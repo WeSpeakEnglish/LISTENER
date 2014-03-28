@@ -32,6 +32,8 @@ u32 queue_get_elem();
 s8 queue_put_elem(u32* Element);
 void queue_init(void);
 
+inline void EntrCritSection(void);
+inline void ExtCritSection(void);
 
 
 #endif

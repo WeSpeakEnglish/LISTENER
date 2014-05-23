@@ -2,6 +2,7 @@
 #include "touchscreen.h"
 #include "keyboard.h" 
 #include "stm32f10x_iwdg.h"
+#include "encoder.h"
 
 void ReleaseEvents(void){
   u8 shot =0;
@@ -20,6 +21,27 @@ void ReleaseEvents(void){
   GenerateTSMessages(1);
   shot =1;
    }
+  if(EncButPressDown){ 
+  EncButPressDown = 0;
+  GenerateEncMesgButton(0); 
+  shot =1;
+  }
+  if(EncButPressUp){  
+  EncButPressUp = 0;
+  GenerateEncMesgButton(1);
+  shot =1;
+   } 
+  
+   if(EncTurnedDown){ 
+  EncTurnedDown = 0;
+  GenerateEncMsgTurn(1);
+  shot =1;
+  }
+  if(EncTurnedUp){  
+  EncTurnedUp = 0;
+  GenerateEncMsgTurn(0);
+  shot =1;
+   } 
   
  if (shot)
    StartShot(); 

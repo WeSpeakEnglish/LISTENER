@@ -63,32 +63,54 @@ void InterruptCS_On(void){
 
 
 void ConfigIO(void){
+//  GPIO_InitTypeDef gpio_cfg;
+//  GPIO_StructInit(&gpio_cfg);
 
   //------------------------------------------------------------------------------------------------------
-  RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;            //clock GPIOA
-  RCC -> APB2ENR |= RCC_APB2ENR_AFIOEN; // alternate function
+ RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;            //clock GPIOA
+ RCC -> APB2ENR |= RCC_APB2ENR_AFIOEN; // alternate function   
+ AFIO -> MAPR |= AFIO_MAPR_SWJ_CFG_1;
   /// ADC////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   
 
         
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
-   //PA8 As DIG IN
+   //PA8  and PA9 As DIG IN
+  GPIOA->CRH &=~(GPIO_CRH_MODE8|GPIO_CRH_MODE9);
+  GPIOA->CRH &=~(GPIO_CRH_CNF8|GPIO_CRH_CNF9);
+  GPIOA->CRH|=(GPIO_CRH_CNF8_0|GPIO_CRH_CNF9_0); //floating input
+  
+ //   gpio_cfg.GPIO_Mode = GPIO_Mode_IPU;
+//  gpio_cfg.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+//  GPIO_Init(GPIOA, &gpio_cfg);
+
+  
 
  //  GPIOA->CRH&=~( GPIO_CRH_CNF8_0);
  //  GPIOA->CRH|=(GPIO_CRH_MODE8_1);
  //  GPIOA->CRH|=(GPIO_CRH_MODE8_0);
 
  //PA10 PA12 As Push-Pull 2 MHz
+        //PA11 pull down
+  
+  GPIOA->CRH &=~GPIO_CRH_MODE11;
+  GPIOA->CRH &=~GPIO_CRH_CNF11;
+  GPIOA->CRH |=GPIO_CRH_CNF11_1; //pull 
+  GPIOA->BSRR |=  GPIO_BSRR_BR11; //up set to 1 
+
+
+  
      GPIOA->CRH&=~(GPIO_CRH_CNF10_0|GPIO_CRH_CNF12_0);
+     GPIOA->CRH&=~(GPIO_CRH_MODE10|GPIO_CRH_MODE12);
      GPIOA->CRH|=(GPIO_CRH_MODE10_1|GPIO_CRH_MODE12_1);
      GPIOA->CRH&=~(GPIO_CRH_MODE10_0|GPIO_CRH_MODE12_0);    
  
-  
+   GPIOA->BSRR |=  GPIO_BSRR_BR10; //up set to 1
     //// DISABLE JTAG Legs
-    
+  
 
-AFIO -> MAPR |= AFIO_MAPR_SWJ_CFG_1;   
+   
 
 //PA15 Open Drain at 50 MHz
     GPIOA->CRH|=(GPIO_CRH_CNF15_0);

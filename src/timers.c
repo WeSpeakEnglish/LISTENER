@@ -4,6 +4,33 @@
 #include "touchscreen.h"
 #include "lighting.h"
 #include "stm32f10x_iwdg.h"
+#include "stm32f10x_tim.h"
+#include "encoder.h"
+
+
+#define encoderStepsPerRevolution 64
+
+u8 encoder_capture_is_ready = 0;
+
+void TIM1_init(void){
+TIM_Cmd(TIM1, DISABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
+  TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
+  TIM_TimeBaseStructInit(&TIM_TimeBaseInitStruct);
+
+
+  TIM_TimeBaseInitStruct.TIM_Period = 65535;//encoderStepsPerRevolution - 1;
+  TIM_TimeBaseInit(TIM1, &TIM_TimeBaseInitStruct);
+  TIM_Cmd(TIM1, DISABLE);
+
+
+  TIM_EncoderInterfaceConfig(TIM1, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
+
+  TIM_ClearFlag(TIM1,TIM_FLAG_Update);
+  TIM_ITConfig(TIM1, TIM_IT_Update, ENABLE);
+  TIM1->CNT = 32768;
+  TIM_Cmd(TIM1, ENABLE);
+}
 
 void TIM2_init(void)
 {
@@ -41,6 +68,23 @@ TIM4->CR1 &=~ TIM_CR1_CEN;
   TIM4->CR1 |= TIM_CR1_CEN;
 }
 
+//#define FORWARD 0
+//#define BACKWARD 1
+/*
+void TIM1_CC_IRQHandler(void)
+{
+  if (TIM_GetITStatus(TIM1, TIM_IT_Update) != RESET)
+  {
+    TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
+
+      encoder_capture_is_ready = 1;
+
+ //   captured_direction = (TIM1->CR1 & TIM_CR1_DIR ? FORWARD : BACKWARD);
+  }
+}
+*/
+//TIM1->CNT
+
 
 void TIM2_IRQHandler(void)
 {
@@ -67,8 +111,14 @@ void TIM4_IRQHandler(void)
     case 0: 
       SetLineKbd(0);
       break;
+    case 1:  
+      TestEnSwitch();// read SW Encoder 
+      break;
     case 2:
       ReadLineKbd(0);
+      break;
+    case 3: 
+      TestEnTurn();
       break;
     case 4: 
       SetLineKbd(1);
@@ -99,9 +149,9 @@ void TIM4_IRQHandler(void)
 }
 
 void IWDG_init(void){
-IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-IWDG_SetPrescaler(IWDG_Prescaler_32); //32000/32 = 1 kHz clock
-IWDG_SetReload(999); //1 sek
+ IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
+ IWDG_SetPrescaler(IWDG_Prescaler_32); //32000/32 = 1 kHz clock
+ IWDG_SetReload(999); //1 sek
  IWDG_ReloadCounter();
  IWDG_Enable();
 }

@@ -135,7 +135,7 @@ void AD_SetTimer(uint16_t prescaler, uint16_t period)
 
 void TIM3_IRQHandler(void)
 {
-  static u8 InsideState = 0;
+ // static u8 InsideState = 0;
 
   TIM3->SR &= ~TIM_SR_UIF;        // очищаем флаг прерывания 
   return;

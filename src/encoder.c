@@ -4,6 +4,7 @@
 #include "lighting.h"
 
 
+
 #define PA10_IN (*((volatile unsigned long *) 0x4221012C)) //bit-band of PA10
 
  u8 EncButPressDown = 0; 

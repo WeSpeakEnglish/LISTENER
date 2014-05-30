@@ -6,11 +6,13 @@
 #include "stm32f10x_iwdg.h"
 #include "stm32f10x_tim.h"
 #include "encoder.h"
+#include "IR_control.h"
 
 
 #define encoderStepsPerRevolution 64
 
 u8 encoder_capture_is_ready = 0;
+
 
 void TIM1_init(void){
 TIM_Cmd(TIM1, DISABLE);
@@ -57,15 +59,19 @@ void TIM2_init(void)
   
 }
 
+
+
 void TIM4_init(void){
 RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;   //разрешить подачу тактовых импульсов на TIM4
 TIM4->CR1 &=~ TIM_CR1_CEN;
 
-  TIM4->PSC = 0; 
-  TIM4->ARR = 11999;//23999;
-  NVIC_EnableIRQ (TIM4_IRQn);    //разрешаем прерывание
+  TIM4->PSC = 999;  //50 uS tick
+  TIM4->ARR = 1900;//overflow at 255; 
+  TIM4->CR1 &= ~TIM_CR1_CEN;  
   TIM4->DIER |= TIM_DIER_UIE;
-  TIM4->CR1 |= TIM_CR1_CEN;
+//  TIM4->CR1 |= TIM_CR1_CEN;
+  NVIC_EnableIRQ (TIM4_IRQn);    //разрешаем прерывание
+
 }
 
 //#define FORWARD 0
@@ -101,13 +107,21 @@ else{
 return;
 }
 
-void TIM4_IRQHandler(void)
-{
-  static u8 InsideState = 0;
 
-  TIM4->SR &= ~TIM_SR_UIF;        // очищаем флаг прерывания 
-//LedErr_On(InsideState%2);
-  switch(InsideState){
+
+
+void IWDG_init(void){
+ IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
+ IWDG_SetPrescaler(IWDG_Prescaler_32); //32000/32 = 1 kHz clock
+ IWDG_SetReload(999); //1 sek
+ IWDG_ReloadCounter();
+ IWDG_Enable();
+}
+
+void SysTick_Handler (void)
+ {
+ static u8 InsideState = 0;
+ switch(InsideState){
     case 0: 
       SetLineKbd(0);
       break;
@@ -145,14 +159,9 @@ void TIM4_IRQHandler(void)
   InsideState %= 16; 
   TestTSPin();
 
-  return;
-}
+  Update_IR_Repetative();
 
-void IWDG_init(void){
- IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
- IWDG_SetPrescaler(IWDG_Prescaler_32); //32000/32 = 1 kHz clock
- IWDG_SetReload(999); //1 sek
- IWDG_ReloadCounter();
- IWDG_Enable();
-}
+  
+  
+ }
 

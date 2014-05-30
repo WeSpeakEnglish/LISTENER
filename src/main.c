@@ -19,13 +19,13 @@ int main(void)
  ADC_config();
  ConfigI2C();
  // configure I2C first
-// LEDs_On(0);
  LedOK_On(1);
  LedErr_On(0);
  TIM1_init(); // encoder support
  TIM2_init(); //Pulse generation 
- TIM4_init(); // Start KeyBoard Scanning
-
+ TIM4_init(); // for IRDA usage
+ SysTick_Config(11999); // Start KeyBoard Scanning
+ IRDA_Int_Conf(); // Configure IRDA Interrupt
  Touch_Int_Conf();
      while(1){
  ReleaseEvents();

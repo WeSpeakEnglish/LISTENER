@@ -15,11 +15,12 @@ return;
 }
 
 void IRDA_Int_Conf(void){
-  RCC->APB2ENR|=RCC_APB2ENR_AFIOEN;    //
-  AFIO->EXTICR[2]&=~AFIO_EXTICR1_EXTI2_PA; //EXTI2  (A2 as result)
-  EXTI->IMR|=EXTI_IMR_MR2;                           //
-  EXTI->RTSR|=EXTI_RTSR_TR2;                          //
-  NVIC_EnableIRQ (EXTI2_IRQn);          //
+  RCC->APB2ENR|=RCC_APB2ENR_AFIOEN;                   // clock
+  AFIO->EXTICR [3>>0x02] |= AFIO_EXTICR1_EXTI3_PB;    // Прерывание INT3 на PORTB
+  EXTI->IMR|=EXTI_IMR_MR3;                            // query enable
+  EXTI->RTSR|=EXTI_RTSR_TR3;                          //Reset edge interrupt
+  EXTI->FTSR |= EXTI_FTSR_TR3;                       //set edge interrupt query
+  NVIC_EnableIRQ (EXTI3_IRQn);                        // enable interrupt
 
 return;
 }
@@ -28,7 +29,7 @@ void Touch_Int_Conf(void){
   NVIC_InitTypeDef  NVIC_InitStructure;
   
   RCC->APB2ENR|=RCC_APB2ENR_AFIOEN;    //
-  AFIO->EXTICR[1]&=~AFIO_EXTICR1_EXTI1_PA; //EXTI1  (A1 as result)
+  AFIO->EXTICR[1>>0x02]&=~AFIO_EXTICR1_EXTI1_PA; //EXTI1  (A1 as result)
   EXTI->IMR|=EXTI_IMR_MR1;                           //
   
    EXTI->RTSR&=~EXTI_RTSR_TR1; 
@@ -45,27 +46,10 @@ void Touch_Int_Conf(void){
 
 return;
 }
-/*
-void InterruptCS_On(void){
- NVIC_SetPriority(EXTI9_5_IRQn, 15);
- NVIC_EnableIRQ(EXTI0_IRQn);
- EXTI->IMR &= ~EXTI_IMR_MR0;
- EXTI->EMR &= ~EXTI_EMR_MR0;  
- RCC->APB2ENR|=RCC_APB2ENR_AFIOEN;              // Alternative functions clocking
- AFIO->EXTICR[2]|=AFIO_EXTICR3_EXTI8_PC;        // AFIO_EXTICR3 
- EXTI->FTSR |= EXTI_FTSR_TR8; // falling edge 
- EXTI->RTSR |= EXTI_RTSR_TR8; //and rising edge
- 
- EXTI->IMR|=EXTI_IMR_MR8;                       // Line 8 in mask (enable interrupt)
- NVIC_EnableIRQ (EXTI9_5_IRQn); 
-}
-*/
+
 
 
 void ConfigIO(void){
-//  GPIO_InitTypeDef gpio_cfg;
-//  GPIO_StructInit(&gpio_cfg);
-
   //------------------------------------------------------------------------------------------------------
  RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;            //clock GPIOA
  RCC -> APB2ENR |= RCC_APB2ENR_AFIOEN; // alternate function   
@@ -106,7 +90,7 @@ void ConfigIO(void){
      GPIOA->CRH|=(GPIO_CRH_MODE10_1|GPIO_CRH_MODE12_1);
      GPIOA->CRH&=~(GPIO_CRH_MODE10_0|GPIO_CRH_MODE12_0);    
  
-   GPIOA->BSRR |=  GPIO_BSRR_BR10; //up set to 1
+   GPIOA->BSRR |=  GPIO_BSRR_BR10; //up set to 0
     //// DISABLE JTAG Legs
   
 
@@ -142,11 +126,11 @@ void ConfigIO(void){
   GPIOB->CRL&=~(GPIO_CRL_MODE2_0);  
   GPIOB->BSRR=GPIO_BSRR_BR2;
 
-  //PB3 as output to zero
-  GPIOB->CRL&=~(GPIO_CRL_CNF3_0);
-  GPIOB->CRL|=(GPIO_CRL_MODE3_1);
-  GPIOB->CRL&=~(GPIO_CRL_MODE3_0);  
-  GPIOB->BSRR=GPIO_BSRR_BR3;
+  //PB3 as input to zero
+  GPIOB->CRL &=~GPIO_CRL_MODE3;
+  GPIOB->CRL &=~GPIO_CRL_CNF3;
+  GPIOB->CRL |=GPIO_CRL_CNF3_1; //pull 
+  GPIOB->BSRR |=  GPIO_BSRR_BR3; //up set to 0 
   
   //PB4 As Input 
   GPIOB->CRL &=~GPIO_CRL_MODE4;
@@ -213,7 +197,6 @@ void EXTI2_IRQHandler(void)
  EXTI->PR|=0x01; // clear interrupt
  InsideCounter++;
 }
-
 
 
 

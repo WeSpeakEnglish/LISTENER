@@ -1,4 +1,6 @@
 #include "lighting.h"
+//u8 LedFaultOn = 0;
+//u8 LedOkOn = 1;
 
 #define MAX_DAC_value 247
 void LEDs_On(u8 DAC_value){
@@ -24,7 +26,8 @@ return;
 }
 
 void LedErr_On(u8 Lighted){
- if(Lighted) GPIOA->ODR&=~GPIO_ODR_ODR12;// log 0 to line (LED ON) 
+  if(Lighted)
+  GPIOA->ODR&=~GPIO_ODR_ODR12;// log 0 to line (LED ON)
  else        GPIOA->ODR|=GPIO_ODR_ODR12;// log 1 to exit (LED off)
 return;
 }

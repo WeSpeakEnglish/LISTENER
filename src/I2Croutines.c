@@ -2,6 +2,7 @@
 #include "stm32f10x_i2c.h"
 #include "lighting.h"
 #include "queue.h"
+#include "beeper.h"
 
 
 #define SLAVE_ADDRESS 0x37<<1
@@ -107,11 +108,30 @@ void I2C2_EV_IRQHandler(void)
       I2C_Cmd(I2C2, ENABLE);
       
       if(Direction == 0x01)
-          if(*I2C2_Buffer_Rx == 0x02)    
-            LEDs_On(I2C2_Buffer_Rx[1]); // Simply Drive LED
-  }
+        SolveCommand(*I2C2_Buffer_Rx);
+   }
 }
 
+void SolveCommand(u8 Command){ //LED, beep, etc
+  switch (Command){
+   case 0x02: LEDs_On(I2C2_Buffer_Rx[1]); // Simply Drive LED
+     break;  
+   case 0x03:
+     if (I2C2_Buffer_Rx[1] & 0x01){
+       LedErr_On(1);
+       LedOK_On(0);
+//       LedOkOn = 0;
+     }
+     else {
+       LedErr_On(0);
+       LedOK_On(1);
+     }
+      if (I2C2_Buffer_Rx[1] & 0x02) BeeperOn(1);
+      else BeeperOn(0);
+     break;
+  }
+
+}
 
 /**
   * @brief  This function handles I2C2 Error interrupt request.

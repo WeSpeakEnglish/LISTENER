@@ -3,6 +3,8 @@
 #include "keyboard.h" 
 #include "stm32f10x_iwdg.h"
 #include "encoder.h"
+#include "lighting.h"
+#include "IR_control.h"
 
 void ReleaseEvents(void){
   u8 shot =0;
@@ -42,10 +44,13 @@ void ReleaseEvents(void){
   GenerateEncMsgTurn(0);
   shot =1;
    } 
-  
+ if(IR_Generate_Events()) shot =1; 
+ 
  if (shot)
    StartShot(); 
    IWDG_ReloadCounter(); 
+   
+
 }
 
 void StartShot(void){

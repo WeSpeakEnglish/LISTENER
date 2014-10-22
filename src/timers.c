@@ -1,5 +1,5 @@
 #include "timers.h"
-#include "stm32F10x.h"
+#include "stm32f10x.h"
 #include "keyboard.h"
 #include "touchscreen.h"
 #include "lighting.h"

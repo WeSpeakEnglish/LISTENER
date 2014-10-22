@@ -31,16 +31,16 @@ void ReadLineKbd(u8 Number){
 
   switch(Number){
     case 0: 
-      readedKeys.COL_0 = ((GPIOB->IDR)&0xF000)>>12; // read tetrade (COLUMN CHECK)
+      readedKeys.Keys.COL_0 = ((GPIOB->IDR)&0xF000)>>12; // read tetrade (COLUMN CHECK)
       break;
     case 1: 
-      readedKeys.COL_1 = ((GPIOB->IDR)&0xF000)>>12;
+      readedKeys.Keys.COL_1 = ((GPIOB->IDR)&0xF000)>>12;
       break;  
     case 2: 
-      readedKeys.COL_2 = ((GPIOB->IDR)&0xF000)>>12;
+      readedKeys.Keys.COL_2 = ((GPIOB->IDR)&0xF000)>>12;
       break;
     case 3: 
-      readedKeys.COL_3 = ((GPIOB->IDR)&0xF000)>>12;
+      readedKeys.Keys.COL_3 = ((GPIOB->IDR)&0xF000)>>12;
   }
 return;
 
@@ -88,9 +88,9 @@ for(i=0;i<16;i++){
       else Event = 0;
      // if(Event){   //press down is Zero
       
-      QueueElem.EventType = Event;              //pressed eq 0 or unpressed (eq1)
-      QueueElem.Keyb_Key = CharNames[i];        // what key number?
-      QueueElem.RCU_Key = 0;
+      QueueElem.QueEl.EventType = Event;              //pressed eq 0 or unpressed (eq1)
+      QueueElem.QueEl.Keyb_Key = CharNames[i];        // what key number?
+      QueueElem.QueEl.RCU_Key = 0;
       
       queue_put_elem(&QueueElem.Bits);
 

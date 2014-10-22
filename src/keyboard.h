@@ -11,7 +11,7 @@ struct Keys{
 };
 
 union Keys_U{
-  struct Keys;
+  struct Keys Keys;
   u16 Bits;
 };
 

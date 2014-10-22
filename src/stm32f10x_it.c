@@ -23,8 +23,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
 
-extern void Timer1IntrHandler (void);
-
 /** @addtogroup Template_Project
   * @{
   */
@@ -147,7 +145,6 @@ void PendSV_Handler(void)
 *******************************************************************************/
 void TIM1_UP_IRQHandler(void)
 {
-  Timer1IntrHandler();
 }
 
 /******************************************************************************/

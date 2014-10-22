@@ -1,6 +1,6 @@
 #ifndef _I2Croutines_h
 #define _I2Croutines_h
-#include "stm32F10x.h"
+#include "stm32f10x.h"
 
 extern u8 Status;
 

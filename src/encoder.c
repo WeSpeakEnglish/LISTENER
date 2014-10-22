@@ -16,9 +16,9 @@
 
  static union QueueElement_U QueueElem;
  
-      QueueElem.EventType = Event;              //pressed eq 0 or unpressed (eq1)
-      QueueElem.Keyb_Key = 0x3E;        // what key number?
-      QueueElem.RCU_Key = 0;
+      QueueElem.QueEl.EventType = Event;              //pressed eq 0 or unpressed (eq1)
+      QueueElem.QueEl.Keyb_Key = 0x3E;        // what key number?
+      QueueElem.QueEl.RCU_Key = 0;
       
       queue_put_elem(&QueueElem.Bits);
  
@@ -29,13 +29,13 @@ return;
 
  static union QueueElement_U QueueElem;
  
-      QueueElem.EventType = 0;              //pressed eq 0 or unpressed (eq1)
-      if(!Event) QueueElem.Keyb_Key = 0x3A;        // what key number?
-      else QueueElem.Keyb_Key = 0x3B;        // what key number?
-      QueueElem.RCU_Key = 0;
+      QueueElem.QueEl.EventType = 0;              //pressed eq 0 or unpressed (eq1)
+      if(!Event) QueueElem.QueEl.Keyb_Key = 0x3A;        // what key number?
+      else QueueElem.QueEl.Keyb_Key = 0x3B;        // what key number?
+      QueueElem.QueEl.RCU_Key = 0;
       // make 2 events ==> Press Down and Up
       queue_put_elem(&QueueElem.Bits);
-      QueueElem.EventType = 1;              //pressed eq 0 or unpressed (eq1)
+      QueueElem.QueEl.EventType = 1;              //pressed eq 0 or unpressed (eq1)
       queue_put_elem(&QueueElem.Bits);
  
 return;

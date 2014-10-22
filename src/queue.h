@@ -22,7 +22,7 @@ struct QueueElement{
 };
 
 union QueueElement_U{
-  struct QueueElement;
+  struct QueueElement QueEl;
   u32 Bits;
 };
 

@@ -122,17 +122,17 @@ u8 IR_Generate_Events(void){
  static union QueueElement_U QueueElem;
 
   if(IR_KeyPress & 0x01){ 
-       QueueElem.EventType = 0;              //pressed eq 0 or unpressed (eq1)
-       QueueElem.Keyb_Key = IR_KeyCode; 
-       QueueElem.RCU_Key = 0;
+       QueueElem.QueEl.EventType = 0;              //pressed eq 0 or unpressed (eq1)
+       QueueElem.QueEl.Keyb_Key = IR_KeyCode; 
+       QueueElem.QueEl.RCU_Key = 0;
       queue_put_elem(&QueueElem.Bits);
       IR_KeyPress &= ~0x01;
       EventGenerated = 1;
   }
   if(IR_KeyPress & 0x02){
-       QueueElem.EventType = 1;              //pressed eq 0 or unpressed (eq1)
-       QueueElem.Keyb_Key = IR_KeyCode; 
-       QueueElem.RCU_Key = 0;
+       QueueElem.QueEl.EventType = 1;              //pressed eq 0 or unpressed (eq1)
+       QueueElem.QueEl.Keyb_Key = IR_KeyCode; 
+       QueueElem.QueEl.RCU_Key = 0;
       queue_put_elem(&QueueElem.Bits);
       IR_KeyPress &= ~0x02;
       IR_KeyCode = 0x00; //Reset key Code

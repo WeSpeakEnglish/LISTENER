@@ -1,5 +1,5 @@
 #include "ioconfig.h"
-#include "stm32F10x.h"
+#include "stm32f10x.h"
 #include "stm32f10x_adc.h"
 
 

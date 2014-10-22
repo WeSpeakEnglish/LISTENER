@@ -8,9 +8,9 @@ void GenerateTSMessages(u8 Event){
 
  static union QueueElement_U QueueElem;
  
-      QueueElem.EventType = Event;              //pressed eq 0 or unpressed (eq1)
-      QueueElem.Keyb_Key = 0x40;        // what key number?
-      QueueElem.RCU_Key = 0;
+      QueueElem.QueEl.EventType = Event;              //pressed eq 0 or unpressed (eq1)
+      QueueElem.QueEl.Keyb_Key = 0x40;        // what key number?
+      QueueElem.QueEl.RCU_Key = 0;
       
       queue_put_elem(&QueueElem.Bits);
  

@@ -147,7 +147,7 @@
         </option>
         <option>
           <name>OGUseCmsis</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OGUseCmsisDspLib</name>
@@ -591,7 +591,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>PANEL2.srec</state>
+          <state>Barom.srec</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>

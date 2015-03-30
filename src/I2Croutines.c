@@ -81,7 +81,7 @@ void I2C2_EV_IRQHandler(void)
        Count++;
       I2C2->DR = I2C2_Buffer_Tx[IndexTX++];
       IndexTX &= 0x03;
-      if (Command == 0x01)
+      if (Command == FPANEL_CMD_GET_EVENTS)
          if(!IndexTX)
             if(WordsTranslate--)*pQueueOut = queue_get_elem();  // next event from queue
       break; 
@@ -114,9 +114,9 @@ void I2C2_EV_IRQHandler(void)
 
 void SolveCommand(u8 Command){ //LED, beep, etc
   switch (Command){
-   case 0x02: LEDs_On(I2C2_Buffer_Rx[1]); // Simply Drive LED
+   case FPANEL_CMD_LIGHT: LEDs_On(I2C2_Buffer_Rx[1]); // Simply Drive LED
      break;  
-   case 0x03:
+   case FPANEL_CMD_LEDS:
      if (I2C2_Buffer_Rx[1] & 0x01){
        LedErr_On(1);
        LedOK_On(0);
@@ -154,17 +154,22 @@ void ProcessCommand(u8* pCommand){
  Command = *pCommand;  
 
   switch(Command){
-    case 0x00:
+    case FPANEL_CMD_GET_STATUS:
       I2C2_Buffer_Tx[0] = Status;
       I2C2_Buffer_Tx[1] = queue.counter & 0x00FF;
       I2C2_Buffer_Tx[2] = (queue.counter >> 8);
       
       break;
   
-    case 0x01:
+    case FPANEL_CMD_GET_EVENTS:
        WordsTranslate = *((u16*)(pCommand+1));  // number of words we will translate
        *pQueueOut = queue_get_elem(); 
        WordsTranslate --; // the first world is set
+       break;
+    
+    case FPANEL_CMD_GET_DISPLAY_CONFIG:
+      I2C2_Buffer_Tx[0] = DISP_CONFIG;
+      break;
  }
 return;
 }

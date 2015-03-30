@@ -12,7 +12,7 @@
 int main(void)
 { 
  ClockInit();    
-// IWDG_init(); //WATCH DOG
+ IWDG_init(); //WATCH DOG
    
  ConfigIO(); // i/î ports configure  
  ConfigureDAC1();

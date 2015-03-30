@@ -10,11 +10,9 @@ LDSCRIPT = ./stm32f100c8_flash.ld
 INCLUDES  := src/ lib/STM32F10x_StdPeriph_Driver/inc/ lib/CMSIS/Core/CM3/
 SOURCES   := $(wildcard $(addsuffix *.s,$(SUBDIRS))) $(wildcard $(addsuffix *.c,$(SUBDIRS)))
 
-CFLAGS  = -mcpu=cortex-m3 -mthumb -Wall -Os -mapcs-frame -D__thumb2__=1
-CFLAGS += -msoft-float -gdwarf-2 -mno-sched-prolog -fno-hosted -mtune=cortex-m3
-CFLAGS += -march=armv7-m -mfix-cortex-m3-ldrd -ffunction-sections -fdata-sections -nostdlib $(DEFS)
+CFLAGS  = -mcpu=cortex-m3 -mthumb $(DEFS)
 ASFLAGS = -mcpu=cortex-m3 -gdwarf-2
-LDFLAGS = -Wl,-static -Wl,--start-group -nostdlib -lgcc -Wl,-script=$(LDSCRIPT)
+LDFLAGS = -mcpu=cortex-m3 -mthumb -nostdlib -Os -Wl,-script=$(LDSCRIPT)
 
 include ../build-env.mk
 include ../rules-stm.mk

@@ -52,23 +52,14 @@ return;
 void ConfigIO(void){
   //------------------------------------------------------------------------------------------------------
  RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;            //clock GPIOA
- RCC -> APB2ENR |= RCC_APB2ENR_AFIOEN; // alternate function   
+ RCC -> APB2ENR |= RCC_APB2ENR_AFIOEN; // alternate function 
+   //// DISABLE JTAG Legs
  AFIO -> MAPR |= AFIO_MAPR_SWJ_CFG_1;
-  /// ADC////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  
-
-        
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
-   //PA8  and PA9 As DIG IN
+ 
+  //PA8  and PA9 As DIG IN
   GPIOA->CRH &=~(GPIO_CRH_MODE8|GPIO_CRH_MODE9);
   GPIOA->CRH &=~(GPIO_CRH_CNF8|GPIO_CRH_CNF9);
   GPIOA->CRH|=(GPIO_CRH_CNF8_0|GPIO_CRH_CNF9_0); //floating input
-  
- //   gpio_cfg.GPIO_Mode = GPIO_Mode_IPU;
-//  gpio_cfg.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
-//  GPIO_Init(GPIOA, &gpio_cfg);
-
   
 
  //  GPIOA->CRH&=~( GPIO_CRH_CNF8_0);
@@ -91,10 +82,8 @@ void ConfigIO(void){
      GPIOA->CRH&=~(GPIO_CRH_MODE10_0|GPIO_CRH_MODE12_0);    
  
    GPIOA->BSRR |=  GPIO_BSRR_BR10; //up set to 0
-    //// DISABLE JTAG Legs
   
-
-   
+     
 
 //PA15 Open Drain at 50 MHz
     GPIOA->CRH|=(GPIO_CRH_CNF15_0);
@@ -107,8 +96,7 @@ void ConfigIO(void){
     
 
   RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;            // тактирование линий GPIOB
- // RCC -> APB2ENR |= RCC_APB2ENR_AFIOEN; // alternate function
-   
+ 
   //PB0 Push-Pull
   GPIOB->CRL&=~(GPIO_CRL_CNF0_0);
   GPIOB->CRL|=(GPIO_CRL_MODE0_1);
@@ -120,11 +108,10 @@ void ConfigIO(void){
   GPIOB->CRL &=~GPIO_CRL_CNF1;
   GPIOB->CRL|=GPIO_CRL_CNF1_0; //floating input
   
-  //PB2 as output to zero
-  GPIOB->CRL&=~(GPIO_CRL_CNF2_0);
-  GPIOB->CRL|=(GPIO_CRL_MODE2_1);
-  GPIOB->CRL&=~(GPIO_CRL_MODE2_0);  
-  GPIOB->BSRR=GPIO_BSRR_BR2;
+  //PB2 as DIG input
+  GPIOB->CRL &=~GPIO_CRL_MODE2;
+  GPIOB->CRL &=~GPIO_CRL_CNF2;
+  GPIOB->CRL|=GPIO_CRL_CNF2_0; //floating input
 
   //PB3 as input to zero
   GPIOB->CRL &=~GPIO_CRL_MODE3;

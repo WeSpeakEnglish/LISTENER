@@ -4,15 +4,15 @@
 
 
 struct Keys{
-  unsigned int COL_0 : 4;
-  unsigned int COL_1 : 4;
-  unsigned int COL_2 : 4;
-  unsigned int COL_3 : 4;  
+  unsigned int COL_0 : 6;
+  unsigned int COL_1 : 6;
+  unsigned int COL_2 : 6;
+  unsigned int COL_3 : 6;  
 };
 
 union Keys_U{
   struct Keys Keys;
-  u16 Bits;
+  u32 Bits;
 };
 
 extern u8 ReadyFlagKb; // is Event detected?
@@ -20,5 +20,5 @@ extern u8 ReadyFlagKb; // is Event detected?
 void SetLineKbd(u8 Number);
 void ReadLineKbd(u8 Number);
 u8 SolvePressedKeys(void);
-void GenerateKbdMessages(u16 XORedKeyBits);
+void GenerateKbdMessages(u32 XORedKeyBits);
 #endif

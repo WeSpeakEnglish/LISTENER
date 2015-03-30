@@ -108,9 +108,27 @@ void I2C2_EV_IRQHandler(void)
       I2C_Cmd(I2C2, ENABLE);
       
       if(Direction == 0x01)
-        SolveCommand(*I2C2_Buffer_Rx);
+         SolveCommand(*I2C2_Buffer_Rx);
    }
 }
+
+/**
+  * @brief  This function handles I2C2 Error interrupt request.
+  * @param  None
+  * @retval : None
+  */
+void I2C2_ER_IRQHandler(void)
+{
+  /* Check on I2C2 AF flag and clear it */
+  if (I2C_GetITStatus(I2C2, I2C_IT_AF)) 
+  {
+    I2C_ClearITPendingBit(I2C2, I2C_IT_AF);
+//         I2C_Cmd(I2C2, DISABLE);
+ //         I2C_Cmd(I2C2, ENABLE);
+ }
+}
+
+
 
 void SolveCommand(u8 Command){ //LED, beep, etc
   switch (Command){
@@ -133,21 +151,6 @@ void SolveCommand(u8 Command){ //LED, beep, etc
 
 }
 
-/**
-  * @brief  This function handles I2C2 Error interrupt request.
-  * @param  None
-  * @retval : None
-  */
-void I2C2_ER_IRQHandler(void)
-{
-  /* Check on I2C2 AF flag and clear it */
-  if (I2C_GetITStatus(I2C2, I2C_IT_AF)) 
-  {
-    I2C_ClearITPendingBit(I2C2, I2C_IT_AF);
-//         I2C_Cmd(I2C2, DISABLE);
- //         I2C_Cmd(I2C2, ENABLE);
- }
-}
 
 
 void ProcessCommand(u8* pCommand){

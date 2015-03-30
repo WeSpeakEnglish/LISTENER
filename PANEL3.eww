@@ -2,17 +2,17 @@
 
 <workspace>
   <project>
-    <path>$WS_DIR$\PANEL2.ewp</path>
+    <path>$WS_DIR$\PANEL3.ewp</path>
   </project>
   <batchBuild>
     <batchDefinition>
       <name>All</name>
       <member>
-        <project>LCD_demo</project>
+        <project>PANEL3</project>
         <configuration>Flash Debug</configuration>
       </member>
       <member>
-        <project>LCD_demo</project>
+        <project>PANEL3</project>
         <configuration>RAM Debug</configuration>
       </member>
     </batchDefinition>

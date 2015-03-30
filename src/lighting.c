@@ -1,19 +1,21 @@
 #include "lighting.h"
-//u8 LedFaultOn = 0;
-//u8 LedOkOn = 1;
 
-#define MAX_DAC_value 247
+#ifndef CURRENT
+#define CURRENT 40000 //uA
+//#define CURRENT 60000 //uA 60mA 
+#endif
+
 void LEDs_On(u8 DAC_value){
-  if (DAC_value < MAX_DAC_value){
+ // if (DAC_value < MAX_DAC_value){
  // DAC->DHR8R1 = DAC_value;
   switch(DAC_value){
   case 0: DAC->DHR8R1 = 0; break;  
-  case 1: DAC->DHR8R1 = 61; break;
-  case 2: DAC->DHR8R1 = 123; break;
-  case 3: DAC->DHR8R1 = 185; break;
-  case 4: DAC->DHR8R1 = 246; break;   
+  case 1: DAC->DHR8R1 = CURRENT/1000; break;
+  case 2: DAC->DHR8R1 = CURRENT/600; break;
+  case 3: DAC->DHR8R1 = CURRENT/400; break;
+  case 4: DAC->DHR8R1 = CURRENT/300; break;   
   default: DAC->DHR8R1 = DAC_value; 
-  }
+ // }
   } 
 return;
 }

@@ -1,9 +1,6 @@
 #include "lighting.h"
 
-#ifndef CURRENT
-#define CURRENT 40000 //uA
-//#define CURRENT 60000 //uA 60mA 
-#endif
+
 
 void LEDs_On(u8 DAC_value){
  // if (DAC_value < MAX_DAC_value){

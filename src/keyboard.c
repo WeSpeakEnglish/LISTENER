@@ -83,9 +83,9 @@ u8 SolvePressedKeys(void){
 #define BUT_DOWN 0x3B
 #define BUT_LEFT 0x3C
 #define BUT_RIGHT 0x3D
-#define BUT_EXIT 0x3F
+#define BUT_EXIT 0x44
 #define BUT_OK 0x3E
-#define BUT_DEL 0x40
+#define BUT_DEL 0x3F
 
 
 void GenerateKbdMessages(u32 XORedKeyBits){ // receve XOR of Old and New Keys State for resolve events

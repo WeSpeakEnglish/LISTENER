@@ -2,11 +2,20 @@
 #include "stm32f10x_dma.h"
 #include "stm32f10x_adc.h"
 #include "adc.h"
+#include "queue.h"
+#include "beeper.h"
+#include "lighting.h"
 
 //#define ADC1_DR_Address    ((uint32_t)0x4001244C)
-
+#define PC14_IN (*((volatile unsigned long *) 0x42220138)) //bit-band of PC14 INput
 
 u16 ADC_VAL[16];
+u8 ADCdataReady = 0;
+u8 CheckVoltagesError = 0;
+ union{
+  struct VoltErr bits;
+  u8 Byte;
+  }VErr; 
 
 void ADC_config(void){
  
@@ -58,8 +67,6 @@ void ADC_config(void){
 
               //Setup order in which the Channels are sampled....
 
-              
-              
               ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_239Cycles5);
               ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 2, ADC_SampleTime_239Cycles5);
               ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 3, ADC_SampleTime_239Cycles5);
@@ -71,7 +78,7 @@ void ADC_config(void){
 //       ADC_RegularChannelConfig(ADC1, ADC_Channel_Vrefint, 7, ADC_SampleTime);
              RCC_ADCCLKConfig( RCC_PCLK2_Div8);
 
-   ADC_Cmd(ADC1, ENABLE); //Enable ADC1  
+             ADC_Cmd(ADC1, ENABLE); //Enable ADC1  
               
 
 
@@ -121,22 +128,13 @@ void AD_SetTimer(uint16_t prescaler, uint16_t period)
 	TIM_TimeBaseStructure.TIM_Period = period - 1;
 	TIM_TimeBaseStructure.TIM_Prescaler = prescaler - 1;
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-
-
- 
     TIM_SelectOutputTrigger(TIM3, TIM_TRGOSource_Update);
-//     TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
     TIM_Cmd(TIM3, ENABLE);
-    
-  //    NVIC_EnableIRQ (TIM3_IRQn);    //разрешаем прерывание
-  //  TIM3->DIER |= TIM_DIER_UIE;
- //   TIM3->CR1 |= TIM_CR1_CEN;
+
 }
 
 void TIM3_IRQHandler(void)
 {
- // static u8 InsideState = 0;
-
   TIM3->SR &= ~TIM_SR_UIF;        // очищаем флаг прерывания 
   return;
 }
@@ -144,13 +142,110 @@ void TIM3_IRQHandler(void)
 void DMA1_Channel1_IRQHandler(void){    
 
     if (DMA_GetITStatus(DMA1_IT_HT1))    {
-     //   dmacounter++;
+
         DMA_ClearITPendingBit(DMA1_IT_HT1);    
     }
     if (DMA_GetITStatus(DMA1_IT_TC1))    {
- //       dmacounter2++;
+        ADCdataReady = 1;
         DMA_ClearITPendingBit(DMA1_IT_TC1);    
     }    
-//DMA1->IFCR = DMA1_IT_GL1;    
+}
 
+u8 AD_CheckVoltages(void){
+  static u32 voltageBase = 0;
+  static u32 ValueFromADC = 0;
+  static s8 readyToMeasure = -1; // a delay before start measure
+  static u8 OldValue = 0; 
+  
+  if (ADCdataReady){
+    ADCdataReady = 0;
+    if(readyToMeasure > 0){
+      if(!voltageBase){
+        voltageBase = 2500000/ADC_VAL[4];
+        VErr.Byte = 0;
+        OldValue = 0;
+      }
+    // check our voltages here
+      
+     ValueFromADC = voltageBase << 12; // here 3.3V
+     if ((ValueFromADC > plus_3V_high_limit)||(ValueFromADC < plus_3V_low_limit)){ 
+      VErr.bits.V3Err = 1;
+      LedOK_On(0);
+      LedErr_On(1);
+      BeeperOn(1);
+     }
+     else 
+      VErr.bits.V3Err = 0;  
+     
+     ValueFromADC = voltageBase * ADC_VAL[0]; // here 5V
+     if ((ValueFromADC > plus_5V_high_limit)||(ValueFromADC < plus_5V_low_limit)) 
+      VErr.bits.V5Err = 1;
+     else 
+      VErr.bits.V5Err = 0; 
+ 
+     ValueFromADC = voltageBase * ADC_VAL[1]; // here 5V
+     if ((ValueFromADC > plus_5VA_high_limit)||(ValueFromADC < plus_5VA_low_limit)) 
+      VErr.bits.Vplus5Err = 1;
+     else 
+      VErr.bits.Vplus5Err = 0; 
+    
+     ValueFromADC = voltageBase * ADC_VAL[2]; // here 12V
+     if ((ValueFromADC > plus_12V_high_limit)||(ValueFromADC < plus_12V_low_limit)) 
+      VErr.bits.V12Err = 1;
+     else 
+      VErr.bits.V12Err = 0;     
+         
+     ValueFromADC = voltageBase * ADC_VAL[3]; // here 5VA
+     if ((ValueFromADC > plus_15VA_high_limit)||(ValueFromADC < plus_15VA_low_limit)) 
+      VErr.bits.Vplus15Err = 1;
+     else 
+      VErr.bits.Vplus15Err = 0; 
+         
+     ValueFromADC = voltageBase * ADC_VAL[5]; // here 5VA
+     if ((ValueFromADC > minus_5VA_high_limit)||(ValueFromADC < minus_5VA_low_limit)) 
+      VErr.bits.Vminus5Err = 1;
+     else 
+      VErr.bits.Vminus5Err = 0;   
+     
+     ValueFromADC = voltageBase * ADC_VAL[6]; // here 5VA
+     if ((ValueFromADC > minus_15VA_high_limit)||(ValueFromADC < minus_15VA_low_limit)) 
+      VErr.bits.Vminus15Err = 1;
+     else 
+      VErr.bits.Vminus15Err = 0;  
+     
+     ValueFromADC = PC14_IN;
+     if (ValueFromADC)
+       VErr.bits.VisoErr =0;
+     else 
+       VErr.bits.VisoErr =1; 
+     
+    }
+    else{
+    readyToMeasure++;    
+    }
+    
+    if(OldValue != VErr.Byte){
+     OldValue = VErr.Byte;
+    CheckVoltagesError = 1; 
+    } 
+  }
+return VErr.Byte;
+}
+
+void GenerateCheck_V_Msg(void){
+ // static u8 OldCode = 0;
+  static union QueueElement_U QueueElem;
+  
+  //if(Code != OldCode){
+  //  OldCode = Code;
+  //  CheckVoltagesError = 0;
+ 
+      QueueElem.QueEl.EventType = 4;              //Error
+      QueueElem.QueEl.Keyb_Key =  VErr.Byte;        // what key number?
+      QueueElem.QueEl.RCU_Key =   0;
+      
+      queue_put_elem(&QueueElem.Bits);
+ 
+  //}
+return;
 }

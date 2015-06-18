@@ -31,6 +31,8 @@ int main(void)
 
      while(1){
  ReleaseEvents();
+ 
+ AD_CheckVoltages(); //IF WE dont need to control voltages (in RECEIVER for EXAMPLE) - just comment this string
 //GPIOA->BSRR |=  GPIO_BSRR_BS10; //up set to 1 
      }   
 

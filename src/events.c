@@ -5,6 +5,7 @@
 #include "encoder.h"
 #include "lighting.h"
 #include "IR_control.h"
+#include "adc.h"
 
 void ReleaseEvents(void){
   u8 shot =0;
@@ -44,7 +45,13 @@ void ReleaseEvents(void){
   GenerateEncMsgTurn(0);
   shot =1;
    } 
- if(IR_Generate_Events()) shot =1; 
+  if(IR_Generate_Events()) shot =1; 
+  
+  if(CheckVoltagesError){
+  shot = 1;
+  CheckVoltagesError = 0;
+  GenerateCheck_V_Msg();
+  }
  
  if (shot)
    StartShot(); 

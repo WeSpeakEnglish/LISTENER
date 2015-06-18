@@ -158,10 +158,7 @@ void SysTick_Handler (void)
   
   InsideState %= 16; 
   TestTSPin();
-
   Update_IR_Repetative();
-
-  
   
  }
 

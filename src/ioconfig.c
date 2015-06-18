@@ -156,6 +156,11 @@ void ConfigIO(void){
   GPIOB->CRH &=~GPIO_CRH_CNF15;
   GPIOB->CRH|=GPIO_CRH_CNF15_0; //floating input
  
+  RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;            // тактирование линий GPIOC
+  GPIOC->CRH &=~GPIO_CRH_MODE14;
+  GPIOC->CRH &=~GPIO_CRH_CNF14;
+  GPIOC->CRH |=GPIO_CRH_CNF14_1; //pull 
+  GPIOC->BSRR |=  GPIO_BSRR_BR14; //up set to 1 
 }
 
 void EXTI0_IRQHandler(void)

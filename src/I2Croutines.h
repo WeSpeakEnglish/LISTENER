@@ -1,6 +1,7 @@
 #ifndef _I2Croutines_h
 #define _I2Croutines_h
 #include "stm32f10x.h"
+#include "defines.h"
 
 #define FPANEL_CMD_GET_STATUS                   0x00
 #define FPANEL_CMD_GET_EVENTS                   0x01
@@ -29,9 +30,7 @@
 
 
 extern u8 Status;
-//IF WE load firmware to RECEIVER  - just change this 2 strings 
-#define DISP_CONFIG FPANEL_DISPLAY_480x272_LQ43+FPANEL_BUS_8BIT+FPANEL_CONTROLLER_SSD1963
-//#define DISP_CONFIG FPANEL_DISPLAY_800x480_LM50+FPANEL_BUS_16BIT+FPANEL_CONTROLLER_SSD1963
+
 
 void ConfigI2C(void);
 void ProcessCommand(u8* pCommand);

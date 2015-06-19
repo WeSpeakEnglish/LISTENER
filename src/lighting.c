@@ -1,5 +1,5 @@
 #include "lighting.h"
-
+#include "defines.h"
 
 
 void LEDs_On(u8 DAC_value){

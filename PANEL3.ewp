@@ -1044,6 +1044,9 @@
     <name>$PROJ_DIR$\src\dac.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\src\defines.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\src\delays.c</name>
   </file>
   <file>

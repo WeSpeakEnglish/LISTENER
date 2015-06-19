@@ -154,14 +154,16 @@ void DMA1_Channel1_IRQHandler(void){
 u8 AD_CheckVoltages(void){
   static u32 voltageBase = 0;
   static u32 ValueFromADC = 0;
-  static s8 readyToMeasure = -1; // a delay before start measure
+//  static s8 readyToMeasure = -1; // a delay before start measure
   static u8 OldValue = 0; 
+  static u32 GotValues[8]={0};
   
   if (ADCdataReady){
     ADCdataReady = 0;
-    if(readyToMeasure > 0){
+ //  if(readyToMeasure > 0){
       if(!voltageBase){
         voltageBase = 2500000/ADC_VAL[4];
+ 
         VErr.Byte = 0;
         OldValue = 0;
       }
@@ -183,7 +185,7 @@ u8 AD_CheckVoltages(void){
      else 
       VErr.bits.V5Err = 0; 
  
-     ValueFromADC = voltageBase * ADC_VAL[1]; // here 5V
+     ValueFromADC = voltageBase * ADC_VAL[1]; // here +5VA
      if ((ValueFromADC > plus_5VA_high_limit)||(ValueFromADC < plus_5VA_low_limit)) 
       VErr.bits.Vplus5Err = 1;
      else 
@@ -195,19 +197,19 @@ u8 AD_CheckVoltages(void){
      else 
       VErr.bits.V12Err = 0;     
          
-     ValueFromADC = voltageBase * ADC_VAL[3]; // here 5VA
+     ValueFromADC = voltageBase * ADC_VAL[3]; // here +15VA
      if ((ValueFromADC > plus_15VA_high_limit)||(ValueFromADC < plus_15VA_low_limit)) 
       VErr.bits.Vplus15Err = 1;
      else 
       VErr.bits.Vplus15Err = 0; 
          
-     ValueFromADC = voltageBase * ADC_VAL[5]; // here 5VA
+     ValueFromADC = voltageBase * ADC_VAL[5]; // here -5VA
      if ((ValueFromADC > minus_5VA_high_limit)||(ValueFromADC < minus_5VA_low_limit)) 
       VErr.bits.Vminus5Err = 1;
      else 
       VErr.bits.Vminus5Err = 0;   
      
-     ValueFromADC = voltageBase * ADC_VAL[6]; // here 5VA
+     ValueFromADC = voltageBase * ADC_VAL[6]; // here -15VA
      if ((ValueFromADC > minus_15VA_high_limit)||(ValueFromADC < minus_15VA_low_limit)) 
       VErr.bits.Vminus15Err = 1;
      else 
@@ -219,10 +221,10 @@ u8 AD_CheckVoltages(void){
      else 
        VErr.bits.VisoErr =1; 
      
-    }
-    else{
-    readyToMeasure++;    
-    }
+  //  }
+  //  else{
+  //  readyToMeasure++;    
+  //  }
     
     if(OldValue != VErr.Byte){
      OldValue = VErr.Byte;

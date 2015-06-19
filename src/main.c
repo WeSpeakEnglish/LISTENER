@@ -6,7 +6,7 @@
 #include "events.h"
 #include "dac.h"
 #include "adc.h"
-
+#include "defines.h"
 
 
 int main(void)
@@ -31,8 +31,9 @@ int main(void)
 
      while(1){
  ReleaseEvents();
- 
+#ifndef _RECEIVER
  AD_CheckVoltages(); //IF WE dont need to control voltages (in RECEIVER for EXAMPLE) - just comment this string
+#endif 
 //GPIOA->BSRR |=  GPIO_BSRR_BS10; //up set to 1 
      }   
 

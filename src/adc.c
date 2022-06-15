@@ -97,7 +97,7 @@ void ADC_config(void){
             DMA_ITConfig(DMA1_Channel1, DMA_IT_TC, ENABLE);
             DMA_ITConfig(DMA1_Channel1, DMA_IT_HT, ENABLE);
             NVIC_EnableIRQ(DMA1_Channel1_IRQn); 
-            AD_SetTimer(24000, 1000);
+            AD_SetTimer(8, 50);
               /* Enable ADC1 DMA */
   
 
@@ -156,7 +156,6 @@ u8 AD_CheckVoltages(void){
   static u32 ValueFromADC = 0;
 //  static s8 readyToMeasure = -1; // a delay before start measure
   static u8 OldValue = 0; 
-  static u32 GotValues[8]={0};
   
   if (ADCdataReady){
     ADCdataReady = 0;

@@ -92,20 +92,7 @@ void TIM1_CC_IRQHandler(void)
 //TIM1->CNT
 
 
-void TIM2_IRQHandler(void)
-{
-static  u8 InsideState = 0; 
-  TIM2->SR &= ~TIM_SR_UIF;        // очищаем флаг прерывания 
-  InsideState++;
-  InsideState%=2;
-if(InsideState) 
-GPIOB->BSRR |= GPIO_BSRR_BS0;
-else{
-     GPIOB->BSRR |= GPIO_BSRR_BR0; // reset
-     TIM2->CR1 &= ~TIM_CR1_CEN;   
-}
-return;
-}
+
 
 
 

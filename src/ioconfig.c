@@ -71,7 +71,7 @@ void ConfigIO(void){
   
   GPIOA->CRH &=~GPIO_CRH_MODE11;
   GPIOA->CRH &=~GPIO_CRH_CNF11;
-  GPIOA->CRH |=GPIO_CRH_CNF11_1; //pull 
+  GPIOA->CRH &=~GPIO_CRH_CNF11_1; //pull 
   GPIOA->BSRR |=  GPIO_BSRR_BR11; //up set to 1 
 
 
@@ -91,7 +91,7 @@ void ConfigIO(void){
     GPIOA->CRH|=(GPIO_CRH_MODE15_1|GPIO_CRH_MODE15_0);
   
     
-    
+
 //---------------------------------------------------------------------------------------------------------
     
 

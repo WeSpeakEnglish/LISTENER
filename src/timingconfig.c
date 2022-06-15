@@ -30,7 +30,7 @@ RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CF
 /* Set new params */
 /* RCC_CFGR_PLLSRC_HSE -- set HSE to input */
 /* RCC_CFGR_PLLMULL3 -- multiplier 3 set to 24 MHz*/
-RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL3);
+RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL3 );
 
 /* Turn on PLL */
 RCC->CR |= RCC_CR_PLLON;

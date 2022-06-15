@@ -19,6 +19,7 @@ struct VoltErr{
   u8 VisoErr       : 1;
 };
 
+extern u16 ADC_VAL[16];
 // analog voltages have 5% accuracy
 // digital ones have only 10% accuracy
 #define plus_3V_low_limit      2970000 // 0.9*(3.3*10^6) uV
